@@ -1,0 +1,106 @@
+#include <iostream>
+#include <string>
+#include <vector>
+# include <cmath>
+
+using namespace std;
+const double ALPHA = .4;
+const double GATE_VAL = 15;
+
+void printAlphaFilter();
+
+double alphaFilter(double dataPoint, double lastDataPoint);
+
+bool isOutlier(double dataPoint, double lastDataPoint);
+
+void GatedAlphaFilter();
+
+double MeasurementGate(double dataPoint, double lastDataPoint);
+
+
+
+int main()
+{
+    char option;
+    cout << "Run AlphaFilter Gated or not?(y/n)";
+    cin >> option;
+
+    if(option == 'y')
+    {
+        GatedAlphaFilter();
+    }
+    else
+    {
+        printAlphaFilter();
+    }
+    return 0;
+}
+
+double alphaFilter(double dataPoint, double lastDataPoint)
+{
+    lastDataPoint = ALPHA * lastDataPoint + (1 - ALPHA) * dataPoint;
+    return lastDataPoint;
+}
+
+void printAlphaFilter()
+{
+    double dataPoint;
+    double lastDataPoint = 0;
+    cout << "Enter data Point:";
+    cin >> dataPoint;
+    do
+    {
+
+        lastDataPoint = alphaFilter(dataPoint, lastDataPoint);
+        cout << "New data point" << lastDataPoint << endl;
+        cin >> dataPoint;
+
+    } while (dataPoint != -1);
+}
+
+bool isOutlier(double dataPoint, double lastDataPoint)
+{
+    if (lastDataPoint != MeasurementGate(dataPoint,lastDataPoint))
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+void GatedAlphaFilter()
+{
+    double dataPoint;
+    double lastDataPoint = 0;
+    cout << "Enter data Point:";
+    cin >> dataPoint;
+    do
+    {
+
+        if (!isOutlier(dataPoint, lastDataPoint))
+        {
+            lastDataPoint = alphaFilter(dataPoint, lastDataPoint);
+            cout << "New data point" << lastDataPoint << endl;
+        }
+        else
+        {
+            cout << "Outlier" << endl;
+        }
+
+        cout << "New data point" << lastDataPoint << endl;
+        cin >> dataPoint;
+
+    } while (dataPoint != -1);
+}
+
+double MeasurementGate(double dataPoint, double lastDataPoint)
+{
+
+    if (abs(lastDataPoint - dataPoint) < GATE_VAL)
+    {
+        lastDataPoint = dataPoint;
+    }
+    return lastDataPoint;
+}
